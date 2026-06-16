@@ -1,0 +1,26 @@
+{
+  "source_csv": "C:\\Users\\admin\\Desktop\\Tamil-English NLP Intelligence Suite\\data\\raw\\Tamil_sentiments.csv",
+  "raw_rows": 15744,
+  "processed_rows": 15575,
+  "text_column": "1",
+  "label_column": "0",
+  "label_distribution": {
+    "Mixed_feelings": 1790,
+    "Negative": 2031,
+    "Positive": 10416,
+    "not-Tamil": 492,
+    "unknown_state": 846
+  },
+  "test_size": 0.2,
+  "random_state": 42,
+  "stratified_split": true,
+  "train_rows": 12460,
+  "test_rows": 3115,
+  "cleaning": [
+    "preserve Tamil Unicode",
+    "lowercase ASCII English characters",
+    "strip URLs",
+    "strip @mentions",
+    "collapse whitespace"
+  ]
+}

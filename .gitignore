@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.bin/
+mlruns/
+reports/generated_audio/
+reports/api_audio/
+*.log
+.DS_Store
+.vscode/

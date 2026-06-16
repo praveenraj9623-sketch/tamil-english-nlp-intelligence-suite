@@ -1,0 +1,271 @@
+{
+  "model_path": "C:\\Users\\admin\\Desktop\\Tamil-English NLP Intelligence Suite\\models\\champion_model.joblib",
+  "model_family": "baseline",
+  "model_name": "tfidf_baseline",
+  "total_examples": 3115,
+  "total_wrong": 1374,
+  "top_n": 20,
+  "confusion_matrix_path": "C:\\Users\\admin\\Desktop\\Tamil-English NLP Intelligence Suite\\reports\\confusion_matrix_champion.png",
+  "hardest_misclassifications": [
+    {
+      "row_index": 1206,
+      "original_text": "Mujhe kuch samajh sirf VFX tu achh hai hai Lekin utna dam nahi jitna zero ka trailer me hai",
+      "cleaned_text": "mujhe kuch samajh sirf vfx tu achh hai hai lekin utna dam nahi jitna zero ka trailer me hai",
+      "true_label": "Mixed_feelings",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9976614942826634,
+      "top_probabilities": {
+        "not-Tamil": 0.9976614942826634,
+        "Mixed_feelings": 0.0007824648150838652,
+        "Negative": 0.0007123878944356502
+      }
+    },
+    {
+      "row_index": 446,
+      "original_text": "itna ghatiya hai trailar lag raha hai  ko tv serial dekh rahe hai thu hai aise trailar par",
+      "cleaned_text": "itna ghatiya hai trailar lag raha hai ko tv serial dekh rahe hai thu hai aise trailar par",
+      "true_label": "Negative",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9952884134331159,
+      "top_probabilities": {
+        "not-Tamil": 0.9952884134331159,
+        "Negative": 0.002059943732286029,
+        "Positive": 0.001032759648621793
+      }
+    },
+    {
+      "row_index": 1513,
+      "original_text": "Hero kya naam hai movie ka..",
+      "cleaned_text": "hero kya naam hai movie ka..",
+      "true_label": "Positive",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9939305598286833,
+      "top_probabilities": {
+        "not-Tamil": 0.9939305598286833,
+        "Negative": 0.002073943807330971,
+        "Positive": 0.0017496386525049127
+      }
+    },
+    {
+      "row_index": 705,
+      "original_text": "dunya ka sb se bakwaas fazoooool gatya film hi",
+      "cleaned_text": "dunya ka sb se bakwaas fazoooool gatya film hi",
+      "true_label": "Mixed_feelings",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9719832521153294,
+      "top_probabilities": {
+        "not-Tamil": 0.9719832521153294,
+        "Negative": 0.007677755029695216,
+        "Mixed_feelings": 0.006947347374249656
+      }
+    },
+    {
+      "row_index": 1770,
+      "original_text": "You kena tunggu lebih lama lagi, untuk tahu saya. Perfect pronunciation  Loves from Malaysia",
+      "cleaned_text": "you kena tunggu lebih lama lagi, untuk tahu saya. perfect pronunciation loves from malaysia",
+      "true_label": "Positive",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9714942447009526,
+      "top_probabilities": {
+        "not-Tamil": 0.9714942447009526,
+        "unknown_state": 0.010754951155395584,
+        "Positive": 0.008832037632587284
+      }
+    },
+    {
+      "row_index": 1056,
+      "original_text": "You kena tunggu lebih lama lagi... untuk tahu saya!   Masss Chiyaan",
+      "cleaned_text": "you kena tunggu lebih lama lagi... untuk tahu saya! masss chiyaan",
+      "true_label": "Positive",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9699221720876311,
+      "top_probabilities": {
+        "not-Tamil": 0.9699221720876311,
+        "Positive": 0.012683733221352852,
+        "unknown_state": 0.006459639154404585
+      }
+    },
+    {
+      "row_index": 2962,
+      "original_text": "Who r watching telugu karthi fans like here",
+      "cleaned_text": "who r watching telugu karthi fans like here",
+      "true_label": "Negative",
+      "predicted_label": "unknown_state",
+      "confidence": 0.969282626788221,
+      "top_probabilities": {
+        "unknown_state": 0.969282626788221,
+        "Positive": 0.012285848870425106,
+        "Negative": 0.009237775481209628
+      }
+    },
+    {
+      "row_index": 2064,
+      "original_text": "You kena tunggu lebih lama lagi untuk tahu saya !! Ppahhhh...only for malaysians !!",
+      "cleaned_text": "you kena tunggu lebih lama lagi untuk tahu saya !! ppahhhh...only for malaysians !!",
+      "true_label": "Positive",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.968829594797216,
+      "top_probabilities": {
+        "not-Tamil": 0.968829594797216,
+        "unknown_state": 0.010594704718003894,
+        "Positive": 0.009557934197077133
+      }
+    },
+    {
+      "row_index": 2426,
+      "original_text": "Marwal studeo ka baap hai 2.0",
+      "cleaned_text": "marwal studeo ka baap hai 2.0",
+      "true_label": "Positive",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9587638055233098,
+      "top_probabilities": {
+        "not-Tamil": 0.9587638055233098,
+        "Negative": 0.016189051266213256,
+        "Mixed_feelings": 0.011028415805728803
+      }
+    },
+    {
+      "row_index": 365,
+      "original_text": "You kena tunggu lebih lama lagi,untuk tahu saya 1:36 Fuyooooo Semmapa!",
+      "cleaned_text": "you kena tunggu lebih lama lagi,untuk tahu saya 1:36 fuyooooo semmapa!",
+      "true_label": "Positive",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9518079216459089,
+      "top_probabilities": {
+        "not-Tamil": 0.9518079216459089,
+        "Positive": 0.0182660188514098,
+        "unknown_state": 0.014575616380329282
+      }
+    },
+    {
+      "row_index": 604,
+      "original_text": "Sema  iam  thala fan",
+      "cleaned_text": "sema iam thala fan",
+      "true_label": "Negative",
+      "predicted_label": "Positive",
+      "confidence": 0.9455104766715327,
+      "top_probabilities": {
+        "Positive": 0.9455104766715327,
+        "Mixed_feelings": 0.04581395589361374,
+        "Negative": 0.004117229814821633
+      }
+    },
+    {
+      "row_index": 354,
+      "original_text": "Mugammoodi padam njavekam vanthavar like podu 🤠🤠 sk fan from kerala",
+      "cleaned_text": "mugammoodi padam njavekam vanthavar like podu 🤠🤠 sk fan from kerala",
+      "true_label": "Positive",
+      "predicted_label": "unknown_state",
+      "confidence": 0.9444783425880671,
+      "top_probabilities": {
+        "unknown_state": 0.9444783425880671,
+        "Mixed_feelings": 0.022187217234926223,
+        "Positive": 0.019623041386929257
+      }
+    },
+    {
+      "row_index": 1389,
+      "original_text": "Thala Ajith Kumar Nerkonda paarvai semma mass thala",
+      "cleaned_text": "thala ajith kumar nerkonda paarvai semma mass thala",
+      "true_label": "Negative",
+      "predicted_label": "Positive",
+      "confidence": 0.9443892254211278,
+      "top_probabilities": {
+        "Positive": 0.9443892254211278,
+        "Mixed_feelings": 0.0543469335732231,
+        "Negative": 0.000974896437166151
+      }
+    },
+    {
+      "row_index": 2384,
+      "original_text": "Like - Bigil Comments  - Kaithi  Deepavali2019",
+      "cleaned_text": "like - bigil comments - kaithi deepavali2019",
+      "true_label": "Negative",
+      "predicted_label": "unknown_state",
+      "confidence": 0.9436031805668679,
+      "top_probabilities": {
+        "unknown_state": 0.9436031805668679,
+        "Negative": 0.03745427929484307,
+        "Mixed_feelings": 0.011116105674401012
+      }
+    },
+    {
+      "row_index": 2552,
+      "original_text": "Kerala Kaithi karthi fan like here",
+      "cleaned_text": "kerala kaithi karthi fan like here",
+      "true_label": "Positive",
+      "predicted_label": "unknown_state",
+      "confidence": 0.9426294223393294,
+      "top_probabilities": {
+        "unknown_state": 0.9426294223393294,
+        "Positive": 0.0242510796552167,
+        "Negative": 0.015560064322933621
+      }
+    },
+    {
+      "row_index": 2559,
+      "original_text": "Im thalapathy fan , Thala massa act pannirukaru......naturaly hair style nalla irukku.....thala nalum massss",
+      "cleaned_text": "im thalapathy fan , thala massa act pannirukaru......naturaly hair style nalla irukku.....thala nalum massss",
+      "true_label": "Negative",
+      "predicted_label": "Positive",
+      "confidence": 0.9354329541329859,
+      "top_probabilities": {
+        "Positive": 0.9354329541329859,
+        "Mixed_feelings": 0.051698601773831294,
+        "Negative": 0.007911690802975036
+      }
+    },
+    {
+      "row_index": 2790,
+      "original_text": "1.37 you kena tunggu lebih lama lagi untuk tahu saya.. meaning you need to wait more to understand me!!..",
+      "cleaned_text": "1.37 you kena tunggu lebih lama lagi untuk tahu saya.. meaning you need to wait more to understand me!!..",
+      "true_label": "Positive",
+      "predicted_label": "not-Tamil",
+      "confidence": 0.9342632887295214,
+      "top_probabilities": {
+        "not-Tamil": 0.9342632887295214,
+        "Positive": 0.03093874738374467,
+        "unknown_state": 0.01984253571450502
+      }
+    },
+    {
+      "row_index": 2906,
+      "original_text": "Makkal Selvan VJS Fans Like Here..!",
+      "cleaned_text": "makkal selvan vjs fans like here..!",
+      "true_label": "Positive",
+      "predicted_label": "unknown_state",
+      "confidence": 0.9337623501523502,
+      "top_probabilities": {
+        "unknown_state": 0.9337623501523502,
+        "Positive": 0.047613888987662056,
+        "Mixed_feelings": 0.008539014799344552
+      }
+    },
+    {
+      "row_index": 1653,
+      "original_text": "തല അജിത് kerala fans like here",
+      "cleaned_text": "തല അജിത് kerala fans like here",
+      "true_label": "not-Tamil",
+      "predicted_label": "unknown_state",
+      "confidence": 0.933290348232959,
+      "top_probabilities": {
+        "unknown_state": 0.933290348232959,
+        "Positive": 0.04314269125707675,
+        "Mixed_feelings": 0.010739527147089761
+      }
+    },
+    {
+      "row_index": 1592,
+      "original_text": "Iyoo thala mass kola mass",
+      "cleaned_text": "iyoo thala mass kola mass",
+      "true_label": "Negative",
+      "predicted_label": "Positive",
+      "confidence": 0.9300349075569809,
+      "top_probabilities": {
+        "Positive": 0.9300349075569809,
+        "Mixed_feelings": 0.0637226027798855,
+        "Negative": 0.004911212472636617
+      }
+    }
+  ]
+}
