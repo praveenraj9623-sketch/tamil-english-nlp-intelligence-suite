@@ -36,11 +36,21 @@ def _plot_confusion_matrix(
     output_path: Path,
 ) -> None:
     cm = confusion_matrix(y_true, y_pred, labels=labels)
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(8.5, 6.8), facecolor="#0b1220")
     display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
     display.plot(ax=ax, cmap="Oranges", values_format="d", xticks_rotation=35, colorbar=False)
-    ax.set_title("Champion Model Confusion Matrix")
+    ax.set_title("Champion Model Confusion Matrix", color="#e8edf5", pad=16)
+    ax.set_xlabel("Predicted label", color="#cbd5e1", labelpad=12)
+    ax.set_ylabel("True label", color="#cbd5e1", labelpad=12)
+    ax.set_facecolor("#0b1220")
+    ax.tick_params(axis="x", colors="#cbd5e1", labelsize=8)
+    ax.tick_params(axis="y", colors="#cbd5e1", labelsize=8)
+    for spine in ax.spines.values():
+        spine.set_color("#334155")
+    for text in display.text_.ravel():
+        text.set_fontsize(8)
     fig.tight_layout()
+    fig.subplots_adjust(bottom=0.28, left=0.20)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output_path, dpi=170)
     plt.close(fig)
@@ -67,6 +77,11 @@ def generate_error_analysis(
     predicted_labels = [classes[index] for index in pred_indices]
     confidences = probabilities[np.arange(len(pred_indices)), pred_indices]
     true_labels = test_df["label"].astype(str).tolist()
+    cm = confusion_matrix(true_labels, predicted_labels, labels=classes)
+    total_examples = int(len(test_df))
+    total_correct = int(np.trace(cm))
+    total_wrong = int(total_examples - total_correct)
+    derived_accuracy = float(total_correct / total_examples) if total_examples else 0.0
 
     _plot_confusion_matrix(true_labels, predicted_labels, classes, reports_path / "confusion_matrix_champion.png")
 
@@ -99,8 +114,12 @@ def generate_error_analysis(
         "model_path": str(model_path),
         "model_family": model_family(bundle),
         "model_name": bundle.get("model_name"),
-        "total_examples": int(len(test_df)),
-        "total_wrong": int(len(wrong_examples)),
+        "labels": list(classes),
+        "total_examples": total_examples,
+        "total_correct": total_correct,
+        "total_wrong": total_wrong,
+        "derived_accuracy": derived_accuracy,
+        "confusion_matrix": cm.tolist(),
         "top_n": int(top_n),
         "confusion_matrix_path": str(reports_path / "confusion_matrix_champion.png"),
         "hardest_misclassifications": hardest,

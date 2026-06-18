@@ -31,6 +31,8 @@ from src.preprocessing import PROJECT_ROOT
 
 RUN_NAME = "multilingual_transformer_embeddings"
 DEFAULT_ENCODER = "paraphrase-multilingual-MiniLM-L12-v2"
+SELECTION_METRIC_ORDER = ["macro_f1", "weighted_f1", "accuracy"]
+SELECTION_METRIC_ORDER_LABEL = "Champion selected by macro F1, then weighted F1, then accuracy."
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -101,7 +103,7 @@ def select_champion(
     champion_path = models_dir / "champion_model.joblib"
     champion_bundle = joblib.load(source_model_path)
     champion_bundle["champion"] = True
-    champion_bundle["selection_metric_order"] = ["macro_f1", "weighted_f1", "accuracy"]
+    champion_bundle["selection_metric_order"] = SELECTION_METRIC_ORDER
     champion_bundle["champion_metrics"] = champion_metrics
     joblib.dump(champion_bundle, champion_path)
 
@@ -115,7 +117,10 @@ def select_champion(
 
     comparison = {
         "experiment_name": EXPERIMENT_NAME,
-        "selection_metric_order": ["macro_f1", "weighted_f1", "accuracy"],
+        "mode": "comparison",
+        "baseline_only": False,
+        "selection_metric_order": SELECTION_METRIC_ORDER,
+        "selection_metric_order_label": SELECTION_METRIC_ORDER_LABEL,
         "champion_model": champion_name,
         "champion_family": champion_bundle.get("model_type"),
         "champion_model_path": str(champion_path),
@@ -162,7 +167,6 @@ def train_transformer_embeddings(
         max_iter=max_iter,
         class_weight="balanced",
         solver="lbfgs",
-        n_jobs=-1,
     )
     classifier.fit(train_embeddings, train_df["label"].astype(str))
     y_true = test_df["label"].astype(str)

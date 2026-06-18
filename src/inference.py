@@ -65,16 +65,28 @@ def model_family(bundle: dict[str, Any]) -> str:
     return "transformer" if bundle.get("model_type") == "transformer" else "baseline"
 
 
-def predict_sentiment(text: str, model_path: str | Path = DEFAULT_CHAMPION_PATH) -> dict[str, Any]:
+def predict_sentiment(
+    text: str,
+    model_path: str | Path = DEFAULT_CHAMPION_PATH,
+    top_n: int = 3,
+) -> dict[str, Any]:
     bundle = load_model(model_path)
     classes, probabilities, cleaned_texts = predict_batch_proba(bundle, [text])
     row = probabilities[0]
     best_idx = int(np.argmax(row))
+    ranked = sorted(
+        (
+            {"label": label, "probability": float(row[class_idx])}
+            for class_idx, label in enumerate(classes)
+        ),
+        key=lambda item: item["probability"],
+        reverse=True,
+    )
     return {
         "sentiment": classes[best_idx],
         "confidence": float(row[best_idx]),
         "model": model_family(bundle),
         "model_name": bundle.get("model_name", bundle.get("model_type", "unknown")),
         "cleaned_text": cleaned_texts[0],
+        "top_probabilities": ranked[: max(int(top_n), 0)],
     }
-

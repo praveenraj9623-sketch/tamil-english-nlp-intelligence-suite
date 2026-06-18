@@ -92,5 +92,8 @@
       8,
       77
     ]
-  ]
+  ],
+  "metrics_path": "C:\\Users\\admin\\Desktop\\Tamil-English NLP Intelligence Suite\\reports\\baseline_metrics.json",
+  "confusion_matrix_path": "C:\\Users\\admin\\Desktop\\Tamil-English NLP Intelligence Suite\\reports\\confusion_matrix_tfidf_baseline.png",
+  "model_path": "C:\\Users\\admin\\Desktop\\Tamil-English NLP Intelligence Suite\\models\\tfidf_baseline.joblib"
 }

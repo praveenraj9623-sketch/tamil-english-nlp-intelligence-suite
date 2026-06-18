@@ -1,179 +1,341 @@
-﻿# Tamil-English NLP Intelligence Suite
+# Tamil-English NLP Intelligence Suite
 
-**GitHub Repository:** [praveenraj9623-sketch/tamil-english-nlp-intelligence-suite](https://github.com/praveenraj9623-sketch/tamil-english-nlp-intelligence-suite)
+Portfolio-grade production-style NLP suite for Tamil-English code-mixed sentiment analysis, pretrained speech-to-text, and Tamil text-to-speech demos for regional customer support workflows.
 
-> A multilingual NLP intelligence suite for Tamil-English sentiment analysis, baseline and transformer modeling, speech-to-text, text-to-speech, FastAPI serving, Streamlit demos, MLflow tracking, and error analysis.
+This project is designed for AI Engineer interviews and portfolio review. It uses pretrained models wherever possible and does not claim custom ASR/TTS training or transformer fine-tuning unless those steps are actually added later.
 
-[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
-[![NLP](https://img.shields.io/badge/NLP-Tamil_English-2563EB)](https://huggingface.co)
-[![Transformers](https://img.shields.io/badge/Embeddings-sentence--transformers-F59E0B)](https://www.sbert.net)
-[![Whisper](https://img.shields.io/badge/Speech-Whisper-0F172A)](https://github.com/openai/whisper)
-[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
-[![MLflow](https://img.shields.io/badge/Tracking-MLflow-0194E2)](https://mlflow.org)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Praveen_Raj-0F172A)](https://praveenraj9623-sketch.github.io/)
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/praveenraj9623-sketch/tamil-english-nlp-intelligence-suite)
+## Problem Statement
 
----
+Customer support text in regional markets often mixes Tamil script, Tanglish, and English in the same message. This suite demonstrates how to clean that noisy text, train sentiment classifiers, compare model families, inspect model errors, expose FastAPI endpoints, and provide a Streamlit demo with speech tools.
 
-## What is This Project?
+The dataset is a public Kaggle sentiment dataset, not private fintech or edtech production data.
 
-This project builds a multilingual Tamil-English NLP workflow for sentiment classification and speech utilities. It includes data preprocessing, TF-IDF baseline modeling, transformer-based modeling, inference helpers, speech-to-text, text-to-speech, API endpoints, dashboard interaction, and error analysis reports.
+## Architecture
 
-**Core outcome:** Tamil-English text/audio -> preprocessing -> NLP model inference -> sentiment prediction -> speech tools -> API/dashboard delivery -> error analysis.
-
----
+```text
+data/raw/Tamil_sentiments.csv
+        |
+        v
+src/preprocessing.py
+  - detects or accepts text/label columns
+  - preserves Tamil Unicode
+  - lowercases English tokens
+  - removes URLs, mentions, extra spaces
+  - stratified 80/20 split
+        |
+        v
+data/processed/train.csv + test.csv
+        |
+        +--> src/baseline_model.py
+        |      TF-IDF word n-grams 1-2 + Logistic Regression
+        |      MLflow run: tfidf_baseline
+        |      writes baseline-only champion when transformer is absent
+        |
+        +--> src/transformer_model.py
+               paraphrase-multilingual-MiniLM-L12-v2 frozen embeddings
+               Logistic Regression classifier on embeddings
+               MLflow run: multilingual_transformer_embeddings
+               compares models when transformer artifacts exist
+        |
+        v
+models/champion_model.joblib
+        |
+        +--> src/error_analysis.py
+        |      confusion matrix + top confident wrong predictions
+        |
+        +--> api/main.py
+        |      FastAPI inference and speech endpoints
+        |
+        +--> app.py
+               Streamlit dashboard
+```
 
 ## Dataset
 
-The project references the Kaggle Tamil-English sentiment dataset:
+Kaggle credit: [Sentiment Analysis in Tamil-English Text](https://www.kaggle.com/datasets/danushkumarv/sentiment-analysis-in-tamilenglish-text).
 
-https://www.kaggle.com/datasets/danushkumarv/sentiment-analysis-in-tamilenglish-text
+The local file is expected at:
 
----
-
-## System Architecture
-
-```mermaid
-flowchart TD
-    A["Tamil-English Dataset<br/>text and labels"] --> B["Preprocessing<br/>cleaning and train/test split"]
-    B --> C["TF-IDF Baseline Model"]
-    B --> D["Transformer Model"]
-    C --> E["Champion Selection"]
-    D --> E
-    E --> F["Inference Service"]
-    F --> G["FastAPI Endpoints"]
-    F --> H["Streamlit App"]
-    I["Audio Input"] --> J["Whisper Speech-to-Text"]
-    J --> F
-    F --> K["gTTS Text-to-Speech"]
-    E --> L["MLflow + Reports<br/>metrics and error analysis"]
+```text
+data/raw/Tamil_sentiments.csv
 ```
 
----
+The Kaggle file used here is headerless:
+
+```text
+column 0: sentiment label
+column 1: text
+```
+
+If your downloaded CSV has headers, inspect them and pass the names instead:
+
+```powershell
+Get-Content .\data\raw\Tamil_sentiments.csv -TotalCount 5
+python -m src.preprocessing --input data/raw/Tamil_sentiments.csv --inspect-only
+```
+
+Common text column names: `text`, `tweet`, `comment`, `content`, `review`, `message`.
+Common label column names: `sentiment`, `label`, `category`, `class`, `target`.
 
 ## Tech Stack
 
-| Category | Tools & Libraries |
-|---|---|
-| Data Processing | Pandas, NumPy |
-| NLP Baseline | scikit-learn, TF-IDF |
-| Embeddings / Transformers | sentence-transformers, PyTorch |
-| Speech-to-Text | openai-whisper |
-| Text-to-Speech | gTTS |
-| API | FastAPI, Uvicorn, python-multipart |
-| Dashboard | Streamlit |
-| Experiment Tracking | MLflow |
-| Visualization | Matplotlib |
-| Packaging | Docker, Docker Compose |
+- Python, pandas, scikit-learn, joblib
+- TF-IDF + Logistic Regression baseline
+- Sentence-Transformers with `paraphrase-multilingual-MiniLM-L12-v2`
+- MLflow tracking
+- OpenAI Whisper `base` pretrained speech-to-text integration
+- gTTS Tamil text-to-speech integration
+- FastAPI, Uvicorn, Streamlit
+- Plotly and Matplotlib reporting
+- Docker and Docker Compose
 
----
+## Local Setup
 
-## API Endpoints
+Open this folder in VS Code:
 
-Start the API locally:
-
-```bash
-uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+```text
+C:\Users\admin\Desktop\Tamil-English NLP Intelligence Suite
 ```
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| `GET` | `/health` | Health check |
-| `POST` | `/predict/sentiment` | Predict Tamil-English sentiment |
-| `POST` | `/speech-to-text` | Convert speech to text |
-| `POST` | `/text-to-speech` | Convert text to speech |
+PowerShell:
 
----
-
-## Quick Start
-
-```bash
-git clone https://github.com/praveenraj9623-sketch/tamil-english-nlp-intelligence-suite.git
-cd tamil-english-nlp-intelligence-suite
+```powershell
+Set-Location "C:\Users\admin\Desktop\Tamil-English NLP Intelligence Suite"
 python -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 pip install -r requirements.txt
+```
+
+Command Prompt:
+
+```cmd
+cd /d "C:\Users\admin\Desktop\Tamil-English NLP Intelligence Suite"
+python -m venv .venv
+.venv\Scripts\activate.bat
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+If PowerShell blocks activation:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+## Rebuild Commands
+
+Place the Kaggle CSV at:
+
+```text
+data/raw/Tamil_sentiments.csv
+```
+
+Run the full pipeline:
+
+```powershell
+python -m src.preprocessing --input data/raw/Tamil_sentiments.csv --label-col 0 --text-col 1
+python -m src.baseline_model
+python -m src.transformer_model
+python -m src.error_analysis
+python scripts/validate_artifacts.py
+```
+
+For a faster demo, you can stop after baseline and error analysis:
+
+```powershell
+python -m src.preprocessing --input data/raw/Tamil_sentiments.csv --label-col 0 --text-col 1
+python -m src.baseline_model
+python -m src.error_analysis
+python scripts/validate_artifacts.py
+```
+
+In that state, the Streamlit app shows:
+
+```text
+Baseline-only mode: transformer comparison not generated yet.
+```
+
+Run the transformer command later to create a real side-by-side comparison.
+
+## Current Metrics
+
+Current local artifacts were regenerated from `data/raw/Tamil_sentiments.csv` with stratified 80/20 split:
+
+| Artifact | Value |
+| --- | ---: |
+| Raw rows | 15,744 |
+| Processed rows | 15,575 |
+| Train rows | 12,460 |
+| Test rows | 3,115 |
+| Champion model | `tfidf_baseline` |
+| Mode | `baseline_only` |
+| Accuracy | 0.5752808988764045 |
+| Macro F1 | 0.4646595756086166 |
+| Weighted F1 | 0.6041238743665586 |
+| Correct predictions | 1,792 |
+| Wrong predictions | 1,323 |
+
+Current label distribution:
+
+| Label | Count |
+| --- | ---: |
+| Positive | 10,416 |
+| Negative | 2,031 |
+| Mixed_feelings | 1,790 |
+| unknown_state | 846 |
+| not-Tamil | 492 |
+
+Champion selection is consistently defined as:
+
+```text
+Champion selected by macro F1, then weighted F1, then accuracy.
+```
+
+Macro F1 is prioritized because this dataset is imbalanced. Weighted F1 can look better when the majority class dominates, so macro F1 gives minority sentiment categories more visibility.
+
+## Artifact Validation
+
+Run:
+
+```powershell
+python scripts/validate_artifacts.py
+```
+
+The validator checks that:
+
+- `error_analysis.total_examples` equals the test split row count.
+- `total_wrong` equals test rows minus the confusion matrix diagonal sum.
+- derived accuracy matches champion metrics.
+- `models/champion_model.joblib` matches the displayed champion model.
+- baseline-only mode is not mislabeled as transformer comparison.
+
+## Run The Apps
+
+Streamlit:
+
+```powershell
 streamlit run app.py
 ```
 
-The local dashboard opens at:
+FastAPI:
 
-```text
-http://127.0.0.1:8501
+```powershell
+uvicorn api.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
----
+API docs:
 
-## Docker Workflow
+```text
+http://127.0.0.1:8000/docs
+```
 
-```bash
+MLflow UI:
+
+```powershell
+mlflow ui --backend-store-uri .\mlruns
+```
+
+Docker Compose:
+
+```powershell
 docker compose up --build
 ```
 
----
+## API Endpoints
 
-## Project Structure
+- `GET /health`
+- `POST /predict/sentiment`
+- `POST /speech-to-text`
+- `POST /text-to-speech`
 
-```text
-tamil-english-nlp-intelligence-suite/
-|-- app.py
-|-- Dockerfile
-|-- docker-compose.yml
-|-- requirements.txt
-|-- api/
-|-- data/
-|-- demo/
-|-- models/
-|-- reports/
-|-- scripts/
-`-- src/
-    |-- baseline_model.py
-    |-- error_analysis.py
-    |-- inference.py
-    |-- preprocessing.py
-    |-- speech_to_text.py
-    |-- text_to_speech.py
-    `-- transformer_model.py
+Example:
+
+```powershell
+Invoke-RestMethod `
+  -Uri "http://127.0.0.1:8000/predict/sentiment" `
+  -Method Post `
+  -ContentType "application/json" `
+  -Body '{"text":"இந்த service romba nalla irukku, support quick ah respond pannanga"}'
 ```
 
----
+Expected response fields:
 
-## Key Outputs
+```json
+{
+  "sentiment": "Positive",
+  "confidence": 0.0,
+  "model": "baseline",
+  "model_name": "tfidf_baseline",
+  "cleaned_text": "...",
+  "top_probabilities": [
+    {"label": "Positive", "probability": 0.0}
+  ]
+}
+```
 
-| Output | Description |
-|---|---|
-| `models/champion_model.joblib` | Selected production-style sentiment model |
-| `models/tfidf_baseline.joblib` | TF-IDF baseline model |
-| `reports/baseline_metrics.json` | Baseline performance metrics |
-| `reports/error_analysis.json` | Error analysis summary |
-| `reports/error_analysis_top20.csv` | Highest-impact error examples |
-| `demo/sample_tamil_gtts.mp3` | Demo text-to-speech output |
+## Speech Tools
 
----
+The Streamlit Speech Tools tab has two workflows:
 
-## Limitations
+1. Speech-to-text: choose `Tamil / Tanglish`, `English`, or `Auto detect`, then upload WAV, MP3, M4A, MP4, AAC, OGG, or FLAC audio, record with the microphone when Streamlit supports `st.audio_input`, or use `demo/sample_tamil_gtts.mp3`. The app normalizes audio to 16 kHz mono PCM WAV before sending it to pretrained Whisper `base`.
+2. Text-to-speech: type Tamil text or use `demo/sample_tamil_text.txt`. The app uses gTTS with `lang="ta"` and returns an MP3 player.
 
-- Code-mixed Tamil-English language can be noisy and context-dependent.
-- Speech-to-text quality depends on audio clarity and dialect coverage.
-- Sentiment labels should be reviewed for production-grade moderation or customer analytics.
+Notes:
 
----
+- Whisper and gTTS are pretrained integrations, not custom-trained models.
+- Tamil / Tanglish mode gives Whisper an explicit `ta` language hint. This is more reliable than auto-detection for short Tamil microphone recordings.
+- First Whisper run can be slow because the pretrained model may load or download.
+- gTTS requires internet access.
+- Whisper needs FFmpeg. This project includes `imageio-ffmpeg` as a fallback, but a system install is also fine:
 
-## Future Improvements
+```powershell
+winget install Gyan.FFmpeg
+```
 
-- Add larger code-mixed datasets.
-- Fine-tune transformer models directly on Tamil-English text.
-- Add model drift tracking for new slang and language patterns.
-- Deploy the API and dashboard as separate production services.
+## Error Analysis
 
----
+Generated files:
 
-## Author
+- `reports/confusion_matrix_champion.png`
+- `reports/error_analysis.json`
+- `reports/error_analysis_top20.csv`
 
-Built by **Praveen Raj A**
+The JSON includes the top 20 most confidently wrong predictions with original text, cleaned text, true label, predicted label, confidence, and top class probabilities.
 
-- Portfolio: https://praveenraj9623-sketch.github.io/
-- LinkedIn: https://www.linkedin.com/in/praveen-raj-a-b05abb2a3/
-- GitHub: https://github.com/praveenraj9623-sketch
-- Repository: https://github.com/praveenraj9623-sketch/tamil-english-nlp-intelligence-suite
+The Kaggle dataset contains noisy Tamil-English, Tanglish, non-Tamil, and other-language samples. Error analysis is used to identify class confusion and data-quality issues before any production fine-tuning.
+
+## Tests
+
+Run:
+
+```powershell
+pytest -q
+```
+
+The tests are intentionally lightweight and avoid downloading Whisper or SentenceTransformer models.
+
+## Demo Script For Interview
+
+1. Sentiment Classifier: enter a Tamil-English support message and show sentiment, confidence band, top-3 class probabilities, model family, and cleaned text.
+2. Model Comparison: explain baseline-only mode or, after transformer training, compare TF-IDF vs frozen multilingual embeddings. Show the 3D confusion landscape to explain true label, predicted label, and sample count.
+3. Speech Tools: play demo audio, transcribe it with Whisper, then generate Tamil speech with gTTS.
+4. Error Analysis: show high-confidence wrong predictions and explain how they reveal non-Tamil/noisy samples and class confusion.
+5. FastAPI: open `/docs`, call `/health`, and show `/predict/sentiment`.
+
+## Known Limitations
+
+- Baseline accuracy is moderate because the dataset is noisy, code-mixed, and imbalanced.
+- This is not production-ready without larger domain-specific labeled data and deployment monitoring.
+- ASR/TTS are pretrained integrations, not custom-trained models.
+- Transformer embeddings are frozen; no transformer fine-tuning is performed.
+- The next modeling step is fine-tuning IndicBERT, MuRIL, XLM-R, or another suitable multilingual/Indic model on a domain-specific dataset.
+
+## Future Work
+
+- Add OCR for Tamil script from support screenshots, receipts, and scanned forms.
+- Fine-tune IndicBERT, MuRIL, or XLM-R after collecting enough labeled Tamil-English support examples.
+- Add human review queues for low-confidence or high-impact predictions.
+- Add monitoring for class drift and language-mix drift.
+- Add CI tests for Docker Compose and API startup.

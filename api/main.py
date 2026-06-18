@@ -63,6 +63,7 @@ def predict_sentiment_endpoint(payload: SentimentRequest) -> dict[str, object]:
         "model": prediction["model"],
         "model_name": prediction["model_name"],
         "cleaned_text": prediction["cleaned_text"],
+        "top_probabilities": prediction.get("top_probabilities", []),
     }
 
 
@@ -80,12 +81,19 @@ async def speech_to_text_endpoint(request: Request) -> dict[str, object]:
     if file is None or not hasattr(file, "filename"):
         raise HTTPException(status_code=400, detail="Upload an audio file in the 'file' form field.")
 
+    language = form.get("language")
+    language = str(language) if language is not None else None
+
     suffix = Path(file.filename or "audio.wav").suffix or ".wav"
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_file:
         temp_file.write(await file.read())
         temp_path = temp_file.name
     try:
-        return transcribe_audio(temp_path)
+        return transcribe_audio(temp_path, language=language)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     finally:
         _cleanup_file(temp_path)
 

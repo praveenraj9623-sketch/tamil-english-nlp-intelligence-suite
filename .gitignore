@@ -9,3 +9,5 @@ reports/api_audio/
 *.log
 .DS_Store
 .vscode/
+.pytest_cache/
+.pytest_tmp/

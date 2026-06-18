@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -31,6 +33,8 @@ from src.preprocessing import PROJECT_ROOT
 
 RUN_NAME = "tfidf_baseline"
 EXPERIMENT_NAME = "tamil_english_sentiment"
+SELECTION_METRIC_ORDER = ["macro_f1", "weighted_f1", "accuracy"]
+SELECTION_METRIC_ORDER_LABEL = "Champion selected by macro F1, then weighted F1, then accuracy."
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -72,7 +76,6 @@ def build_pipeline(max_iter: int = 2000) -> Pipeline:
                     max_iter=max_iter,
                     class_weight="balanced",
                     solver="lbfgs",
-                    n_jobs=-1,
                 ),
             ),
         ]
@@ -127,7 +130,53 @@ def evaluate_model(
     return metrics
 
 
+def write_baseline_only_champion(
+    bundle: dict[str, Any],
+    metrics: dict[str, Any],
+    models_path: Path,
+    reports_path: Path,
+) -> dict[str, Any]:
+    """Write a complete champion/comparison state when only the baseline exists."""
+    champion_path = models_path / "champion_model.joblib"
+    champion_bundle = {
+        **bundle,
+        "champion": True,
+        "baseline_only": True,
+        "champion_metrics": metrics,
+        "selection_metric_order": SELECTION_METRIC_ORDER,
+    }
+    joblib.dump(champion_bundle, champion_path)
+
+    baseline_cm_path = reports_path / "confusion_matrix_tfidf_baseline.png"
+    champion_cm_path = reports_path / "confusion_matrix_champion.png"
+    if baseline_cm_path.exists():
+        shutil.copyfile(baseline_cm_path, champion_cm_path)
+
+    comparison = {
+        "experiment_name": EXPERIMENT_NAME,
+        "mode": "baseline_only",
+        "baseline_only": True,
+        "note": "Baseline-only mode: transformer comparison not generated yet.",
+        "selection_metric_order": SELECTION_METRIC_ORDER,
+        "selection_metric_order_label": SELECTION_METRIC_ORDER_LABEL,
+        "champion_model": RUN_NAME,
+        "champion_family": "baseline",
+        "champion_model_path": str(champion_path),
+        "models": {RUN_NAME: metrics},
+    }
+    (reports_path / "model_comparison.json").write_text(
+        json.dumps(comparison, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    (reports_path / "champion_metrics.json").write_text(
+        json.dumps(metrics, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return comparison
+
+
 def configure_mlflow(tracking_uri: str | None = None) -> None:
+    os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
     tracking_uri = tracking_uri or f"file:{PROJECT_ROOT / 'mlruns'}"
     mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment(EXPERIMENT_NAME)
@@ -161,17 +210,21 @@ def train_baseline(
     joblib.dump(bundle, model_path)
     metrics["model_path"] = str(model_path)
 
-    champion_path = models_path / "champion_model.joblib"
-    if not champion_path.exists():
-        provisional_bundle = {
-            **bundle,
-            "champion": True,
-            "provisional_champion": True,
-            "champion_metrics": metrics,
-            "selection_metric_order": ["baseline_only_until_transformer_run"],
-        }
-        joblib.dump(provisional_bundle, champion_path)
-        metrics["provisional_champion_path"] = str(champion_path)
+    metrics_path = reports_path / "baseline_metrics.json"
+    metrics_path.write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    transformer_ready = (
+        (reports_path / "transformer_metrics.json").exists()
+        and (models_path / "transformer_embeddings.joblib").exists()
+    )
+    if transformer_ready:
+        print(
+            "Transformer artifacts already exist. Rerun `python -m src.transformer_model` "
+            "after this baseline run to refresh the champion comparison."
+        )
+    else:
+        comparison = write_baseline_only_champion(bundle, metrics, models_path, reports_path)
+        metrics["baseline_only_champion_path"] = comparison["champion_model_path"]
 
     configure_mlflow(mlflow_tracking_uri)
     with mlflow.start_run(run_name=RUN_NAME):
