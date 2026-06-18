@@ -4,6 +4,10 @@ Portfolio-grade production-style NLP suite for Tamil-English code-mixed sentimen
 
 This project is designed for AI Engineer interviews and portfolio review. It uses pretrained models wherever possible and does not claim custom ASR/TTS training or transformer fine-tuning unless those steps are actually added later.
 
+## Live Demo
+
+Streamlit app: [Tamil-English NLP Intelligence Suite](https://tamil-english-nlp-intelligence-suite-ffndrptskn57ml3ky4jua7.streamlit.app/)
+
 ## Problem Statement
 
 Customer support text in regional markets often mixes Tamil script, Tanglish, and English in the same message. This suite demonstrates how to clean that noisy text, train sentiment classifiers, compare model families, inspect model errors, expose FastAPI endpoints, and provide a Streamlit demo with speech tools.
